@@ -7,13 +7,15 @@ import { ConfirmRideScreen } from "./components/ConfirmRideScreen";
 import { RideRequestedScreen } from "./components/RideRequestedScreen";
 import { RideOnWayScreen } from "./components/RideOnWayScreen";
 import { SeniorHomeScreen } from "./components/senior/SeniorHomeScreen";
-// import { SeniorBookingScreen } from './components/senior/SeniorBookingScreen';
+import { SeniorBookingScreen } from './components/senior/SeniorBookingScreen';
 // import { DisabilityHomeScreen } from './components/disability/DisabilityHomeScreen';
 // import { DisabilityBookingScreen } from './components/disability/DisabilityBookingScreen';
 import { IlliterateHomeScreen } from "./components/illiterate/IlliterateHomeScreen";
-// import { IlliterateBookingScreen } from './components/illiterate/IlliterateBookingScreen';
+import { IlliterateBookingScreen } from './components/illiterate/IlliterateBookingScreen';
 import { ParcelDetailsScreen } from "./components/parcel/ParcelDetailsScreen";
 import { ParcelConfirmScreen } from "./components/parcel/ParcelConfirmScreen";
+import { IlliterateConfirmScreen } from "./components/illiterate/IlliterateConfirmScreen";
+import { FareSelectionScreenSenior } from "./components/FareSelectionSenior";
 
 type Mode = "standard" | "senior" | "illiterate" | null;
 type Screen =
@@ -115,64 +117,77 @@ export default function App() {
   }
 
   // Senior Citizens Mode
-  if (selectedMode === "senior") {
-    return (
-      <div className="max-w-md mx-auto bg-white shadow-2xl min-h-screen">
-        {currentScreen === "home" && (
-          <SeniorHomeScreen
-            onNavigateToBooking={() => setCurrentScreen("fare")}
-            onNavigateToParcel={() => setCurrentScreen("parcel-details")}
-            onBack={() => setSelectedMode(null)}
-          />
-        )}
-        {currentScreen === "fare" && (
-          <FareSelectionScreen
-            onBack={() => setCurrentScreen("home")}
-            onSelectFare={(fareType) => {
-              setSelectedFareType(fareType);
-              setCurrentScreen("confirm");
-            }}
-          />
-        )}
-        {currentScreen === "confirm" && (
-          <ConfirmRideScreen
-            onBack={() => setCurrentScreen("fare")}
-            onConfirm={() => setCurrentScreen("requested")}
-            fareType={selectedFareType}
-          />
-        )}
-        {currentScreen === "requested" && (
-          <RideRequestedScreen
-            onContinue={() => setCurrentScreen("on-way")}
-            fareType={selectedFareType}
-          />
-        )}
-        {currentScreen === "on-way" && (
-          <RideOnWayScreen fareType={selectedFareType} />
-        )}
-        {currentScreen === "parcel-details" && (
-          <ParcelDetailsScreen
-            onBack={() => setCurrentScreen("home")}
-            onContinue={() => setCurrentScreen("parcel-confirm")}
-            mode="senior"
-          />
-        )}
-        {currentScreen === "parcel-confirm" && (
-          <ParcelConfirmScreen
-            onBack={() => setCurrentScreen("parcel-details")}
-            onConfirm={() => setCurrentScreen("parcel-on-way")}
-            mode="senior"
-          />
-        )}
-        {currentScreen === "parcel-on-way" && (
-          <RideRequestedScreen
-            onContinue={() => setCurrentScreen("home")}
-            fareType="parcel"
-          />
-        )}
-      </div>
-    );
-  }
+if (selectedMode === "senior") {
+  return (
+    <div className="max-w-md mx-auto bg-white shadow-2xl min-h-screen">
+      {currentScreen === "home" && (
+        <SeniorHomeScreen
+          onNavigateToBooking={() => setCurrentScreen("booking")}
+          onNavigateToParcel={() => setCurrentScreen("parcel-details")}
+          onBack={() => setSelectedMode(null)}
+        />
+      )}
+
+      {currentScreen === "booking" && (
+        <SeniorBookingScreen
+          onBack={() => setCurrentScreen("home")}
+          onConfirm={() => setCurrentScreen("fare")}
+        />
+      )}
+
+      {currentScreen === "fare" && (
+        <FareSelectionScreenSenior
+          onBack={() => setCurrentScreen("booking")}
+          onSelectFare={(fareType) => {
+            setSelectedFareType(fareType);
+            setCurrentScreen("confirm");
+          }}
+        />
+      )}
+
+      {currentScreen === "confirm" && (
+        <ConfirmRideScreen
+          onBack={() => setCurrentScreen("fare")}
+          onConfirm={() => setCurrentScreen("requested")}
+          fareType={selectedFareType}
+        />
+      )}
+
+      {currentScreen === "requested" && (
+        <RideRequestedScreen
+          onContinue={() => setCurrentScreen("on-way")}
+          fareType={selectedFareType}
+        />
+      )}
+
+      {currentScreen === "on-way" && <RideOnWayScreen fareType={selectedFareType} />}
+
+      {currentScreen === "parcel-details" && (
+        <ParcelDetailsScreen
+          onBack={() => setCurrentScreen("home")}
+          onContinue={() => setCurrentScreen("parcel-confirm")}
+          mode="senior"
+        />
+      )}
+
+      {currentScreen === "parcel-confirm" && (
+        <ParcelConfirmScreen
+          onBack={() => setCurrentScreen("parcel-details")}
+          onConfirm={() => setCurrentScreen("parcel-on-way")}
+          mode="senior"
+        />
+      )}
+
+      {currentScreen === "parcel-on-way" && (
+        <RideRequestedScreen
+          onContinue={() => setCurrentScreen("home")}
+          fareType="parcel"
+        />
+      )}
+    </div>
+  );
+}
+
 
   // Accessibility Mode
   // if (selectedMode === 'disability') {
@@ -234,42 +249,45 @@ export default function App() {
   //   );
   // }
 
-  // Voice/Illiterate Mode - Simplified flow with minimal taps
-  if (selectedMode === "illiterate") {
-    return (
-      <div className="max-w-md mx-auto bg-white shadow-2xl min-h-screen">
-        {currentScreen === "home" && (
-          <IlliterateHomeScreen
-            onNavigateToBooking={() => {
-              // Skip fare selection, go directly to confirmation
-              setSelectedFareType("car");
-              setCurrentScreen("requested");
-            }}
-            onNavigateToParcel={() => {
-              // Skip parcel details, go directly to confirmation
-              setCurrentScreen("parcel-on-way");
-            }}
-            onBack={() => setSelectedMode(null)}
-          />
-        )}
-        {currentScreen === "requested" && (
-          <RideRequestedScreen
-            onContinue={() => setCurrentScreen("on-way")}
-            fareType={selectedFareType}
-          />
-        )}
-        {currentScreen === "on-way" && (
-          <RideOnWayScreen fareType={selectedFareType} />
-        )}
-        {currentScreen === "parcel-on-way" && (
-          <RideRequestedScreen
-            onContinue={() => setCurrentScreen("home")}
-            fareType="parcel"
-          />
-        )}
-      </div>
-    );
-  }
+ if (selectedMode === "illiterate") {
+  return (
+    <div className="max-w-md mx-auto bg-white shadow-2xl min-h-screen">
+      {currentScreen === "home" && (
+        <IlliterateHomeScreen
+          onNavigateToBooking={() => setCurrentScreen("booking")}
+          onNavigateToParcel={() => setCurrentScreen("parcel-on-way")}
+          onBack={() => setSelectedMode(null)}
+        />
+      )}
+
+      {currentScreen === "booking" && (
+        <IlliterateBookingScreen
+          onBack={() => setCurrentScreen("home")}
+          onConfirmRide={(rideType) => {
+            setSelectedFareType(rideType);
+            setCurrentScreen("confirm"); // ✅ move to confirmation
+          }}
+        />
+      )}
+
+      {currentScreen === "confirm" && (
+        <IlliterateConfirmScreen
+          type="ride"
+          onConfirm={() => setCurrentScreen("requested")}
+        />
+      )}
+
+      {currentScreen === "requested" && (
+        <RideRequestedScreen
+          onContinue={() => setCurrentScreen("on-way")}
+          fareType={selectedFareType}
+        />
+      )}
+
+      {currentScreen === "on-way" && <RideOnWayScreen fareType={selectedFareType} />}
+    </div>
+  );
+}
 
   return null;
 }
