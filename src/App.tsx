@@ -16,6 +16,7 @@ import { ParcelDetailsScreen } from "./components/parcel/ParcelDetailsScreen";
 import { ParcelConfirmScreen } from "./components/parcel/ParcelConfirmScreen";
 import { IlliterateConfirmScreen } from "./components/illiterate/IlliterateConfirmScreen";
 import { FareSelectionScreenSenior } from "./components/FareSelectionSenior";
+import { IlliterateConfirmRideScreen } from "./components/illiterate/IlliterateConfirmRideScreen";
 
 type Mode = "standard" | "senior" | "illiterate" | null;
 type Screen =
@@ -249,7 +250,8 @@ if (selectedMode === "senior") {
   //   );
   // }
 
- if (selectedMode === "illiterate") {
+ // Illiterate Mode
+if (selectedMode === "illiterate") {
   return (
     <div className="max-w-md mx-auto bg-white shadow-2xl min-h-screen">
       {currentScreen === "home" && (
@@ -265,14 +267,15 @@ if (selectedMode === "senior") {
           onBack={() => setCurrentScreen("home")}
           onConfirmRide={(rideType) => {
             setSelectedFareType(rideType);
-            setCurrentScreen("confirm"); // ✅ move to confirmation
+            setCurrentScreen("confirm");
           }}
         />
       )}
 
       {currentScreen === "confirm" && (
-        <IlliterateConfirmScreen
-          type="ride"
+        <IlliterateConfirmRideScreen
+          fareType={selectedFareType}
+          onBack={() => setCurrentScreen("booking")}
           onConfirm={() => setCurrentScreen("requested")}
         />
       )}
@@ -284,10 +287,17 @@ if (selectedMode === "senior") {
         />
       )}
 
-      {currentScreen === "on-way" && <RideOnWayScreen fareType={selectedFareType} />}
+      {currentScreen === "on-way" && (
+        <RideOnWayScreen
+          onBack={() => setCurrentScreen("home")}
+          onConfirm={() => setCurrentScreen("home")}
+          fareType={selectedFareType}
+        />
+      )}
     </div>
   );
 }
+
 
   return null;
 }
