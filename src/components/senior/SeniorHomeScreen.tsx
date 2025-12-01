@@ -161,7 +161,7 @@ export function SeniorHomeScreen({
 
       {/* 🎤 Voice Mic — bottom-right above navbar */}
       <div className="fixed bottom-24 right-6 z-50">
-        <VoiceMicButton label="Speak Destination" size="xl" />
+        <VoiceMicButton label="Speak Destination" size="lg" />
       </div>
 
       {/* Bottom Navbar */}
